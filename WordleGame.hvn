@@ -1,0 +1,76 @@
+/call
+    io
+    lists
+    files
+    math
+/them
+
+$main
+    files >> read wordle.txt = @listastext words
+    @num game = 1
+    @text question = "do you want to continue? write 0 or 1"
+    @text decision = empty
+
+    loop game == 1
+        process(words)
+
+        io >> prompt question = decision
+
+        /type decision as num = game
+    end
+$done
+
+$empty process @listastext words
+
+    math >> random to words.size() = @num id
+    lists >> get at id in words = @text word
+    word = word.toLowerCase()
+
+    @listastext remained = empty
+    @text letter = empty
+
+    loop num i = 0; i < 5; i++
+        letter = Character.toString(word.charAt(i))
+        lists >> add in remained _letter
+    end
+
+    @text dialog = "type:"
+    @truth found = false
+
+    loop num i = 0; i < 6; i++
+        io >> prompt dialog = @text guess
+
+        if guess.equals(word)
+            io >> out correct!
+            found = true
+            break
+        end
+
+        else
+            loop num j = 0; j < 5; j++
+                if word.charAt(j) == guess.charAt(j)
+                    remained.remove(Character.toString(word.charAt(j)))
+                    io >> out right place!
+                end
+
+                elif remained.contains(Character.toString(guess.charAt(j)))
+                    io >> out wrong place!
+                end
+
+                else
+                    io >> out not exist!
+                end
+            end
+        end
+
+        io >> out ***
+    end
+
+    if found == false
+        @text answer = "you couldn't find the answer... it was: "
+        answer += word
+        io >> out _answer
+        io >> out ***
+    end
+
+$done
